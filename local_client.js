@@ -1,52 +1,45 @@
-/*jslint node:true,vars:true, unparam:true */
-/*jshint unused:true */
+var mraa_touch = require("mraa");
+var shelljs = require('shelljs/global');
+var http = require('http');
 
+//REMEMBER TO INSTALL MODULES BEFORE RUNNING!!!!!!!!!
 
-/*
-The Touch Notifier Node.js sample application distributed within Intel® XDK IoT Edition under the IoT with Node.js Projects project creation option showcases how to read digital data from a Grover Starter Kit Plus – IoT Intel® Edition Touch Sensor, start a web server and communicate wirelessly using WebSockets.
-
-MRAA - Low Level Skeleton Library for Communication on GNU/Linux platforms
-Library in C/C++ to interface with Galileo & other Intel platforms, in a structured and sane API with port nanmes/numbering that match boards & with bindings to javascript & python.
-
-Steps for installing MRAA & UPM Library on Intel IoT Platform with IoTDevKit Linux* image
-Using a ssh client: 
-1. echo "src maa-upm http://iotdk.intel.com/repos/1.1/intelgalactic" > /etc/opkg/intel-iotdk.conf
-2. opkg update
-3. opkg upgrade
-
-Article: https://software.intel.com/en-us/html5/articles/iot-touch-notifier-nodejs-and-html5-samples
-*/
-
-//MRAA Library was installed on the board directly through ssh session
-var mraa = require("mraa");
-
-//GROVE Kit Shield D6 --> GPIO6
-//GROVE Kit Shield D2 --> GPIO2
-function startSensorWatch(socket) {
-    'use strict';
-    var touch_sensor_value = 0, last_t_sensor_value;
-
-    //Touch Sensor connected to D2 connector
-    var digital_pin_D2 = new mraa.Gpio(2);
-    digital_pin_D2.dir(mraa.DIR_IN);
-
-    //Buzzer connected to D6 connector
-    var digital_pin_D6 = new mraa.Gpio(6);
-    digital_pin_D6.dir(mraa.DIR_OUT);
-
-    digital_pin_D6.write(0);
-
-    setInterval(function () {
-        touch_sensor_value = digital_pin_D2.read();
-        if (touch_sensor_value === 1 && last_t_sensor_value === 0) {
-            console.log("Buzz ON!!!");
-            socket.emit('message', "present");
-            digital_pin_D6.write(touch_sensor_value);
-        } else if (touch_sensor_value === 0 && last_t_sensor_value === 1) {
-            console.log("Buzz OFF!!!");
-            //socket.emit('message', "absent");
-            digital_pin_D6.write(touch_sensor_value);
-        }
-        last_t_sensor_value = touch_sensor_value;
-    }, 500);
+//callback to setInterval that checks whether the touchpad is currently being touched
+var readTouch = function () {
+    var cur_check = touch.read();
+    if(cur_check && !last_check) {
+        console.log("Touched!");//takePic();
+    }
+    last_check = cur_check;
 };
+
+
+// Runs when the touchpad is touched
+// Runs command line code to take a picture
+var takePic = function() {
+    var whatval = exec('mkdir hey').code;   //need to substitute in command line code to take pic
+    if(whatval!==0) {
+        console.log("Failure!");
+    } else {
+        console.log("Success");
+    }
+};
+
+// After picture is taken/saved, makes an http request to server 
+// to alert that picture is ready to be tweeted
+var notifyServer = function(pic_name) {
+    var client = http.createClient(3000, 'localhost');
+    var request = client.request('GET', '/new_pic');
+    request.write(pic_name);
+    request.end();
+    request.on("response", function (response) {    //IF THERE ARE DELETION ISSUES, CHECK THAT THIS ISN'T EFFING UP
+        exec('rm ' + response);      //SERVER NEEDS TO RETURN THE NAME OF THE PICTURE FILE!
+    });
+};
+
+
+var touch = new mraa_touch.Gpio(8);
+touch.dir(mraa_touch.DIR_IN);
+
+var last_check = false;
+setInterval(readTouch, 1);
