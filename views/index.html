@@ -1,5 +1,12 @@
 {% extends "layout.html" %}
 
 {% block content %}
-	{{title}}
+<container>
+			<h2>Welcome to Boothy, your virtual photo booth application! <br><br> Enter your Twitter handle and cell phone number in the boxes below, and we'll register a spot in line for you!</h2>
+			<form name="submit">
+				<input type='text' name='twitter' placeholder='twitter'></input>
+				<input type='text' name='number' placeholder='number'></input>
+			</form>
+</container>
+
 {% endblock %}
