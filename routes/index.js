@@ -3,10 +3,11 @@ var shelljs = require('shelljs/global');
 var router = express.Router();
 var twitterAPI = require('node-twitter-api');
 var crypto = require('crypto');
+var booth_data = require('../data/store').store;
 
 /* GET home page. */
 router.get('/', function(req, res) {
-	var content = 'this is the test content'
+	var content = 'this is the test content';
 	res.render('index', {title: content});
 });
 
@@ -35,11 +36,15 @@ function tweetPic(file_name) {
 
 	twitter.statuses("update_with_media", {
 	        media: file_name,  
-	        status: "Routed post!"
+	        status: "Routed p!"
 	    },
 	    oauth_access_token,
 	    oauth_access_secret,
 	    function(error, data, response) {
+	    	console.log("Data Before: " + booth_data.queue);
+	    	booth_data.removeFromQueue();
+	    	console.log("Data After: " + booth_data.queue);
+
 	        if (error) {
 	            console.log(error);
 	            // something went wrong
