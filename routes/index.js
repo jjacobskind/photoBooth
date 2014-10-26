@@ -18,9 +18,20 @@ router.get('/new_pic/:file_name', function(req, res) {
 	var file_name = 'images/' + req.params.file_name;
 	console.log(file_name);
 	tweetPic(file_name);
-	res.render('index', {title: content});
-});
 
+	booth_data.removeFromQueue();
+
+	var phone = booth_data.queue[0].phone;
+	var name = booth_data.queue[0].twitter;
+
+	exec('curl http://textbelt.com/text -d number=' +
+		phone + ' -d "message=Hi, "' + name +
+		'". It\'s your turn at the Photo Booth!"');
+
+	console.log('Texting ' + name);
+
+	res.redirect('/');
+});
 
 
 function tweetPic(file_name) {

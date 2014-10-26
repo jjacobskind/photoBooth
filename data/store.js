@@ -16,7 +16,7 @@ var store = {
 		this.signup_count++;
 	},
 	removeFromQueue: function() {
-		console.log("!!!This is: " + this);
+		
 		this.queue.shift();
 		this.picture_index++;
 	}
