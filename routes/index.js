@@ -10,7 +10,10 @@ var booth_data = require('../data/store').store;
 /* GET home page. */
 router.get('/', function(req, res) {
 	var content = 'this is the test content';
-	res.render('index', {title: content});
+	var queue = booth_data.queue.map(function(person) {
+		return person.twitter;
+	})
+	res.render('index', {queue: queue});
 });
 
 router.get('/new_pic/:file_name', function(req, res) {
@@ -23,6 +26,8 @@ router.get('/new_pic/:file_name', function(req, res) {
 		res.render('index', {title: content});
 	});
 });
+
+
 
 function tweetPic(file_name) {
 	// Timestamp

@@ -3,11 +3,18 @@
 {% block content %}
 <container>
 			<h2>Welcome to Boothy, your virtual photo booth application! <br><br> Enter your Twitter handle and cell phone number in the boxes below, and we'll register a spot in line for you!</h2>
-			{{title}}
-			<form name="submit">
+
+		<div id='input-form'>
+			<form name="submit" action='/submit' method='post'>
 				<input type='text' name='twitter' placeholder='twitter'></input>
 				<input type='text' name='number' placeholder='number'></input>
+				<button type='submit' class='btn btn-default'>Submit</button>
 			</form>
+		</div>
+		<h3>Current Queue:</h3>
+		{% for person in queue %}
+			<p>{{person}}</p>
+		{% endfor %}
 </container>
 
 {% endblock %}
