@@ -18,13 +18,18 @@ router.get('/', function(req, res) {
 
 router.get('/new_pic/:file_name', function(req, res) {
 
-	var file_name = 'images/' + req.params.file_name;
+	var file_name = 'images/' + req.params.file_name + '.jpg';
 
-	exec('curl -o ' + req.params.file_name + '.jpg http://172.20.10.10:8080/photoaf.jpg');
+	exec('curl -o ' + file_name + ' http://172.20.10.10:8080/photoaf.jpg');
 
-	tweetPic(file_name);
+
+	console.log(booth_data.queue[0].twitter + booth_data.event_tag)
+
+	tweetPic(file_name, booth_data.queue[0].twitter + ' ' + booth_data.event_tag);
 
 	booth_data.removeFromQueue();
+
+
 
 	var phone = booth_data.queue[0].phone;
 	var name = booth_data.queue[0].twitter;
@@ -39,7 +44,7 @@ router.get('/new_pic/:file_name', function(req, res) {
 });
 
 
-function tweetPic(file_name) {
+function tweetPic(file_name, tweet) {
 	// Timestamp
 	var curtime = parseInt(process.env.DEPLOY_TIMESTAMP || Date.now());
 
@@ -57,7 +62,7 @@ function tweetPic(file_name) {
 
 	twitter.statuses("update_with_media", {
 	        media: file_name,  
-	        status: "Routed p!"
+	        status: tweet
 	    },
 	    oauth_access_token,
 	    oauth_access_secret,

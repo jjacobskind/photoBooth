@@ -9,7 +9,16 @@ var readTouch = function () {
     var cur_check = touch.read();
     if(cur_check && !last_check) {
         console.log("Touched!");//takePic();
-    }
+        var options = {
+            hostname: 'localhost',
+            port: 3000,
+            path: '/new_pic/' + pic_name,
+            method: 'GET'
+        }
+
+        var request = http.request(options, function(res) {});
+        request.end();
+        }
     last_check = cur_check;
 };
 
