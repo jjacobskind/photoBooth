@@ -1,4 +1,6 @@
 var express = require('express');
+var fs = require('fs');
+var http = require('http');
 var shelljs = require('shelljs/global');
 var router = express.Router();
 var twitterAPI = require('node-twitter-api');
@@ -15,6 +17,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/new_pic/:file_name', function(req, res) {
+
 	var file_name = 'images/' + req.params.file_name;
 	console.log(file_name);
 	tweetPic(file_name);
