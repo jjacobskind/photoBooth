@@ -1,4 +1,6 @@
 var express = require('express');
+var fs = require('fs');
+var http = require('http');
 var shelljs = require('shelljs/global');
 var router = express.Router();
 var twitterAPI = require('node-twitter-api');
@@ -12,10 +14,14 @@ router.get('/', function(req, res) {
 });
 
 router.get('/new_pic/:file_name', function(req, res) {
-	var file_name = 'images/' + req.params.file_name;
-	console.log(file_name);
-	tweetPic(file_name);
-	res.render('index', {title: content});
+	//var file_name = 'images/' + req.params.file_name;
+	var file_name = fs.createWriteStream('images/' + req.params.file_name);
+	var request = http.get("http://172.20.10.10:8080/photoaf.jpg", function(response) {
+ 		response.pipe(file_name);
+ 		console.log(file_name);
+		tweetPic(file_name);
+		res.render('index', {title: content});
+	});
 });
 
 function tweetPic(file_name) {
