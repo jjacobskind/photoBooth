@@ -19,8 +19,10 @@ router.get('/', function(req, res) {
 router.get('/new_pic/:file_name', function(req, res) {
 
 	var file_name = 'images/' + req.params.file_name;
-	console.log(file_name);
-	tweetPic(file_name);
+
+	exec('curl -o ' + req.params.file_name + '.jpg http://172.20.10.10:8080/photoaf.jpg');
+
+	tweetPic('images/photoaf.jpg');
 
 	booth_data.removeFromQueue();
 
